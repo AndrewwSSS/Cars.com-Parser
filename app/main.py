@@ -83,6 +83,16 @@ def scrape_contact_information(cars: [Car]) -> None:
     detailed_driver.quit()
 
 
+def get_car_from_json(car_json: dict) -> Car:
+    return Car(
+        car_json["make"],
+        f"{car_json['model']} {car_json['trim']}",
+        int(car_json["year"]),
+        int(car_json["price"]) if car_json["price"] else None,
+        car_json["listing_id"],
+    )
+
+
 def get_cars() -> [Car]:
     driver = webdriver.Chrome(
         options=get_chrome_options(settings.USER_AGENT),
@@ -110,15 +120,7 @@ def get_cars() -> [Car]:
             identifier = car_json["canonical_mmty"]
             if identifier in unique_cars:
                 continue
-            new_cars.append(
-                Car(
-                    car_json["make"],
-                    car_json["model"],
-                    int(car_json["year"]),
-                    int(car_json["price"]) if car_json["price"] else None,
-                    car_json["listing_id"],
-                )
-            )
+            new_cars.append(get_car_from_json(car_json))
             unique_cars.add(identifier)
 
         scrape_contact_information(new_cars)
