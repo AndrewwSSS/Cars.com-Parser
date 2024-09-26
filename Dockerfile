@@ -7,8 +7,8 @@ RUN apk update && apk add --no-cache \
 
 RUN pip install --upgrade pip
 
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_DRIVER=/usr/bin/chromedriver
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_DRIVER=/usr/bin/chromedriver
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR app/
