@@ -5,6 +5,9 @@ from selenium.common import TimeoutException
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 import settings
 from models import Car
@@ -32,6 +35,7 @@ def change_driver_proxy(driver: webdriver.Chrome) -> None:
 
 def get_chrome_options(user_agent: str, load_strategy: str = "eager") -> Options:
     chrome_options = Options()
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--disable-infobars")
     chrome_options.add_argument("--disable-extensions")
@@ -71,6 +75,7 @@ def scrape_contact_information(cars: [Car]) -> None:
         )
 
         try:
+
             element = detailed_driver.find_element(
                 By.ID,
                 "CarsWeb.ListingController.show"
