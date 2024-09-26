@@ -1,29 +1,19 @@
 # Cars.com-Parser
 
-Python script that parse cars and seller's contact from site cars.com
+Cars.com Parser
+This repository contains a web scraping tool for extracting car listing data from Cars.com. The parser scrapes important details about vehicles, including make, model, year, price, manager contact, and outputs the data in a structured format suitable for further analysis.
 
 # How to run:
 
-In settings by you have to provide valid proxies.
-Also, in settings.py You can find settings to configure parser work. 
+In settings.py you have to provide valid proxies.
+Also, in settings You can find variables to configure parser work. 
 
-```shell
-python -m venv venv
-```
+# Requirements:
+1. Docker
 
-for unix systems:
+# How to run:
 ```shell
-source venv/bin/activate
-```
-
-for windows systems:
-```shell
-venv/Scripts/activate
-```
-
-```shell
-pip install -r requirements.txt
-python main.py
+docker-compose up --build
 ```
 
 # Problems I faced:
