@@ -49,7 +49,7 @@ def interceptor(request):
     request.headers["Referer"] = "https://www.google.com/"
 
 
-def total_page_number(driver: webdriver.Chrome) -> int:
+def get_pages_number(driver: webdriver.Chrome) -> int:
     test = (
         driver.find_elements(
             By.CSS_SELECTOR,
@@ -99,7 +99,7 @@ def get_cars() -> [Car]:
         driver.get(settings.BASE_URL + f"&page={current_page}")
 
         if not pages_count:
-            pages_count = total_page_number(driver)
+            pages_count = get_pages_number(driver)
 
         json_data = driver.find_element(
             By.ID, "search-live-content"
