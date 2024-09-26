@@ -20,7 +20,7 @@ PROXIES = [
     "gtjikewl:lyeraqmvxaix@206.41.172.74:6634"
 ]
 
-OUTPUT_FILEPATH = "cars.csv"
+OUTPUT_FILEPATH = "../cars.csv"
 
 
 

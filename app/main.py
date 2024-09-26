@@ -59,6 +59,30 @@ def total_page_number(driver: webdriver.Chrome) -> int:
     return int(test)
 
 
+def scrape_contact_information(cars: [Car]) -> None:
+    detailed_driver = webdriver.Chrome(
+        options=get_chrome_options(settings.USER_AGENT),
+        seleniumwire_options=get_seleniumwire_options()
+    )
+
+    for car in cars:
+        detailed_driver.get(
+            settings.DETAIL_URL_PATTERN.format(listing_id=car.listing_id)
+        )
+
+        try:
+            element = detailed_driver.find_element(
+                By.ID,
+                "CarsWeb.ListingController.show"
+            )
+            json_data = json.loads(element.get_attribute("innerHTML"))
+            car.contact = json_data["callSourceDniMetadata"]["seller"]["phoneNumber"]
+        except TimeoutException:
+            ...
+
+    detailed_driver.quit()
+
+
 def get_cars() -> [Car]:
     driver = webdriver.Chrome(
         options=get_chrome_options(settings.USER_AGENT),
@@ -83,7 +107,6 @@ def get_cars() -> [Car]:
 
         new_cars = []
         for car_json in json.loads(json_data)["vehicleArray"]:
-
             identifier = car_json["canonical_mmty"]
             if identifier in unique_cars:
                 continue
@@ -98,28 +121,7 @@ def get_cars() -> [Car]:
             )
             unique_cars.add(identifier)
 
-        detailed_driver = webdriver.Chrome(
-            options=get_chrome_options(settings.USER_AGENT),
-            seleniumwire_options=get_seleniumwire_options()
-        )
-
-        # Getting contact info
-        for car in new_cars:
-            detailed_driver.get(
-                settings.DETAIL_URL_PATTERN.format(listing_id=car.listing_id)
-            )
-
-            try:
-                element = detailed_driver.find_element(
-                    By.ID,
-                    "CarsWeb.ListingController.show"
-                )
-                json_data = json.loads(element.get_attribute("innerHTML"))
-                car.contact = json_data["callSourceDniMetadata"]["seller"]["phoneNumber"]
-            except TimeoutException:
-                ...
-
-        detailed_driver.quit()
+        scrape_contact_information(new_cars)
         cars.extend(new_cars)
 
         if current_page == pages_count:
