@@ -6,12 +6,16 @@ from seleniumwire import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-
 import settings
 from models import Car
 
 
 def get_seleniumwire_options() -> dict:
+    """
+    Returns Selenium Wire options with a randomly selected proxy from settings.
+
+    :return: A dictionary containing proxy settings for Selenium Wire.
+    """
     proxy = random.choice(settings.PROXIES)
     return {
         "proxy": {
@@ -23,6 +27,11 @@ def get_seleniumwire_options() -> dict:
 
 
 def change_driver_proxy(driver: webdriver.Chrome) -> None:
+    """
+    Changes the proxy for an existing Selenium WebDriver instance.
+
+    :param driver: The Selenium WebDriver instance to change the proxy for.
+    """
     new_proxy = random.choice(settings.PROXIES)
     driver.proxy = {
         "http": f"http://{new_proxy}",
@@ -32,6 +41,13 @@ def change_driver_proxy(driver: webdriver.Chrome) -> None:
 
 
 def get_chrome_options(user_agent: str, load_strategy: str = "eager") -> Options:
+    """
+    Creates and returns Chrome options for the WebDriver.
+
+    :param user_agent: User-Agent string to use for the WebDriver.
+    :param load_strategy: Page load strategy to use, default is "eager".
+    :return: Configured Chrome options object.
+    """
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
@@ -46,12 +62,23 @@ def get_chrome_options(user_agent: str, load_strategy: str = "eager") -> Options
 
 
 def interceptor(request):
+    """
+    Modifies HTTP request headers for Selenium Wire.
+
+    :param request: The Selenium Wire request object to modify.
+    """
     request.headers["User-Agent"] = settings.USER_AGENT
     request.headers["Accept-Language"] = "en-US,en;q=0.9"
     request.headers["Referer"] = "https://www.google.com/"
 
 
 def get_pages_number(driver: webdriver.Chrome) -> int:
+    """
+    Retrieves the total number of pages available for scraping.
+
+    :param driver: The Selenium WebDriver instance.
+    :return: The total number of pages as an integer.
+    """
     test = (
         driver.find_elements(
             By.CSS_SELECTOR,
@@ -62,6 +89,11 @@ def get_pages_number(driver: webdriver.Chrome) -> int:
 
 
 def scrape_contact_information(cars: [Car]) -> None:
+    """
+    Scrapes contact information for a list of cars by visiting their detailed pages.
+
+    :param cars: A list of Car objects for which contact details are to be scraped.
+    """
     detailed_driver = webdriver.Chrome(
         options=get_chrome_options(settings.USER_AGENT),
         seleniumwire_options=get_seleniumwire_options()
@@ -86,6 +118,12 @@ def scrape_contact_information(cars: [Car]) -> None:
 
 
 def get_car_from_json(car_json: dict) -> Car:
+    """
+    Creates and returns a Car object from a JSON dictionary.
+
+    :param car_json: A dictionary containing car data.
+    :return: A Car object created from the provided data.
+    """
     return Car(
         car_json["make"],
         f"{car_json['model']} {car_json['trim']}",
@@ -96,6 +134,11 @@ def get_car_from_json(car_json: dict) -> Car:
 
 
 def get_cars() -> [Car]:
+    """
+    Scrapes car data from the website across multiple pages.
+
+    :return: A list of Car objects containing scraped data.
+    """
     driver = webdriver.Chrome(
         options=get_chrome_options(settings.USER_AGENT),
         seleniumwire_options=get_seleniumwire_options(),
@@ -134,6 +177,9 @@ def get_cars() -> [Car]:
 
 
 def main():
+    """
+    Main function that scrapes car data and writes it to a CSV file.
+    """
     cars = get_cars()
     Car.write_to_csv(cars, settings.OUTPUT_FILEPATH)
 
