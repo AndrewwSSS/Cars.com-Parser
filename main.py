@@ -83,6 +83,7 @@ def get_cars() -> [Car]:
 
         new_cars = []
         for car_json in json.loads(json_data)["vehicleArray"]:
+
             identifier = car_json["canonical_mmty"]
             if identifier in unique_cars:
                 continue
@@ -121,10 +122,9 @@ def get_cars() -> [Car]:
         detailed_driver.quit()
         cars.extend(new_cars)
 
-        # if current_page == pages_count:
-        #     return cars
+        if current_page == pages_count:
+            return cars
         current_page += 1
-        return cars
 
 
 def main():
